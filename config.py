@@ -38,7 +38,7 @@ def set_config(str_type, component, config):
 
 
 def get_config(str_type, component, wait=1):
-    """ 获取组件配置信息
+    """ 获取组件配置信息123
     
     :param str_type: 
     :param component: 
