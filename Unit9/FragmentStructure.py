@@ -42,7 +42,6 @@ def shard_hset(base, key, value, total_elements, shard_size):
     """
 
     shard = shard_key(base, key, total_elements, shard_size)
-    shard = shard_key(base, key, total_elements, shard_size)
     return conn.hset(shard, key, value)
 
 
