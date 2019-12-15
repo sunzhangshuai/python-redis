@@ -2,7 +2,7 @@ import redis
 import time
 import json
 import uuid
-import lock
+from Unit6 import lock
 
 pool = redis.ConnectionPool(host='localhost', port=6379, decode_responses=True)
 conn = redis.Redis(connection_pool=pool)

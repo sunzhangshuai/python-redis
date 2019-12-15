@@ -1,3 +1,2 @@
-ipfind/GeoLiteCity-Blocks.csv
-.idea/
-venv/
+/.idea/
+/venv/

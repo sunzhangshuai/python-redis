@@ -1,1 +1,20 @@
 # Created by .ignore support plugin (hsz.mobi)
+将删除 .gitignore
+将删除 .idea/sqldialects.xml
+将删除 venv/include/
+将删除 venv/lib/python3.7/site-packages/redis-3.3.8.dist-info/
+将删除 venv/lib/python3.7/site-packages/redis/
+将删除 Unit7/Search.py
+将删除 Unit7/__pycache__/
+将删除 Unit9/ShortStructure.py
+将删除 Unit9/__pycache__/
+将删除 __pycache__/conn_redis.cpython-37.pyc
+将删除 conn_redis.py
+将删除 .idea/.gitignore
+将删除 .idea/dataSources/
+将删除 .idea/inspectionProfiles/
+将删除 .idea/vcs.xml
+将删除 .idea/workspace.xml
+将删除 .idea/misc.xml
+将删除 .idea/modules.xml
+将删除 .idea/python-redis.iml

@@ -1,8 +1,9 @@
+import conn_redis
 import redis
 import uuid
 import time
-pool = redis.ConnectionPool(host='localhost', port=6379, decode_responses=True)
-conn = redis.Redis(connection_pool=pool)
+
+conn = conn_redis.conn
 
 
 def acquire_lock(lockname, acquire_timeout=10):
@@ -63,6 +64,7 @@ def release_lock(lockname, identifier):
     :param identifier: 锁的唯一标识
     :return: 是否释放成功
     """
+
     lock = "lock:" + lockname
     pipe = conn.pipeline(True)
     while True:
@@ -80,7 +82,7 @@ def release_lock(lockname, identifier):
     return False
 
 
-def acquire_time_with_timeout(lockname, acquire_timeout=10, lock_timeout=10):
+def acquire_lock_with_timeout(lockname, acquire_timeout=10, lock_timeout=10):
     """ redis构建带有超时时间的锁
 
     :param lockname: 锁名称
@@ -114,7 +116,7 @@ def acquire_semaphore(sename, limit, timeout=10):
     identifier = str(uuid.uuid4())
     now = time.time()
     pipe = conn.pipeline(True)
-    pipe.zremrangebyscore(sename, '-inf', now-timeout)
+    pipe.zremrangebyscore(sename, '-inf', now - timeout)
     pipe.zadd(sename, {now: identifier})
     pipe.zrank(sename, identifier)
     if pipe.execute([-1]) < limit:

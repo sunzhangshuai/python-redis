@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/redis.iml" filepath="$PROJECT_DIR$/.idea/redis.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/python-redis.iml" filepath="$PROJECT_DIR$/.idea/python-redis.iml" />
     </modules>
   </component>
 </project>

@@ -1,6 +1,6 @@
 import pymysql
 
-db = pymysql.connect("10.10.57.106","transaction_r","5fzAyqDDm5f5ScCZkF1n","service_transaction" )
+db = pymysql.connect("10.10.57.106", "transaction_r", "5fzAyqDDm5f5ScCZkF1n", "service_transaction" )
 
 # 使用cursor()方法获取操作游标
 cursor = db.cursor()

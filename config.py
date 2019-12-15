@@ -53,4 +53,3 @@ def get_config(str_type, component, wait=1):
         CONFIGS[key] = config
         CHECKED[key] = time.time()
     return CONFIGS.get(key)
-
