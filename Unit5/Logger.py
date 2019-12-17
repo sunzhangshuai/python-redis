@@ -1,11 +1,12 @@
+import conn_redis
 import redis
 import logging
 import time
 import datetime
 
-pool = redis.ConnectionPool(host='localhost', port=6379, decode_responses=True)
-conn = redis.Redis(connection_pool=pool)
+conn = conn_redis.conn
 
+# 日志登记
 SEVERITY = {
     logging.DEBUG: "debug",
     logging.INFO: "info",
@@ -20,18 +21,20 @@ SEVERITY.update((name, name) for name in list(SEVERITY.values()))
 def log_recent(name, message, severity=logging.INFO, pipe=None):
     """ redis 记录不同日志和等级的最近100条日志
 
-    :param name:
-    :param message:
-    :param severity:
+    :param string name: 日志名称
+    :param string message: 日志内容
+    :param string severity: 日志等级
     :param pipe:
     :return:
     """
 
     severity = str(SEVERITY.get(severity, severity)).lower()
     destination = "recent:%s:%s" % (name, severity)
+    # 为日志记录时间
     message = time.asctime() + ' ' + message
     pipe = pipe or conn.pipeline()
     pipe.lpush(destination, message)
+    # 对日志列表进行修剪，只包含最新的100条消息
     pipe.ltrim(destination, 0, 99)
     pipe.execute()
 
@@ -55,6 +58,7 @@ def log_common(name, message, severity=logging.INFO, timeout=5):
             pipe.watch(start_key)
             now = datetime.datetime.utcnow().timetuple()
             hour_start = datetime.datetime(*now[:4]).isoformat()
+            # 判断有没有设定开始计数的时间，如果没有，则不处理
             existing = pipe.get(start_key)
             pipe.multi()
             if existing and existing < hour_start:
@@ -70,4 +74,4 @@ def log_common(name, message, severity=logging.INFO, timeout=5):
 
 if __name__ == "__main__":
     # log_recent('sb', 'sunchen is sb', logging.WARN)
-    log_common("sb", "sunchen is sb", logging.WARN)
+    log_common("sb", "sunchen is 2sb", logging.WARN)
