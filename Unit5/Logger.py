@@ -23,7 +23,7 @@ def log_recent(name, message, severity=logging.INFO, pipe=None):
 
     :param string name: 日志名称
     :param string message: 日志内容
-    :param string severity: 日志等级
+    :param string|int severity: 日志等级
     :param pipe:
     :return:
     """
@@ -42,10 +42,10 @@ def log_recent(name, message, severity=logging.INFO, pipe=None):
 def log_common(name, message, severity=logging.INFO, timeout=5):
     """ 按小时记录日志出现的次数
 
-    :param name:
-    :param message:
-    :param severity:
-    :param timeout:
+    :param string name: 日志名称
+    :param string message: 日志内容
+    :param string|int severity: 日志等级
+    :param int timeout: 超时时间
     :return:
     """
     severity = str(SEVERITY.get(severity, severity)).lower()
@@ -58,7 +58,7 @@ def log_common(name, message, severity=logging.INFO, timeout=5):
             pipe.watch(start_key)
             now = datetime.datetime.utcnow().timetuple()
             hour_start = datetime.datetime(*now[:4]).isoformat()
-            # 判断有没有设定开始计数的时间，如果没有，则不处理
+            # 判断有没有设定开始计数的时间，如果有并且，把历史的日志存为历史。
             existing = pipe.get(start_key)
             pipe.multi()
             if existing and existing < hour_start:
@@ -74,4 +74,5 @@ def log_common(name, message, severity=logging.INFO, timeout=5):
 
 if __name__ == "__main__":
     # log_recent('sb', 'sunchen is sb', logging.WARN)
-    log_common("sb", "sunchen is 2sb", logging.WARN)
+    log_common('sb', 'sunchen is 2sb', logging.WARN)
+    pass
