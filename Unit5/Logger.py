@@ -3,6 +3,7 @@ import redis
 import logging
 import time
 import datetime
+import Unit5.ServiceDiscoveryAndConfiguration as configuration
 
 conn = conn_redis.conn
 
@@ -18,21 +19,24 @@ SEVERITY = {
 SEVERITY.update((name, name) for name in list(SEVERITY.values()))
 
 
-def log_recent(name, message, severity=logging.INFO, pipe=None):
+@configuration.redis_connection('logs')
+def log_recent(fun_conn, name, message, severity=logging.INFO, pipe=None):
     """ redis 记录不同日志和等级的最近100条日志
 
-    :param string name: 日志名称
-    :param string message: 日志内容
-    :param string|int severity: 日志等级
-    :param pipe:
-    :return:
+    @param fun_conn:
+    @param string name: 日志名称
+    @param string message: 日志内容
+    @param string|int severity: 日志等级
+    @param pipe:
+    @return:
+
     """
 
     severity = str(SEVERITY.get(severity, severity)).lower()
     destination = "recent:%s:%s" % (name, severity)
     # 为日志记录时间
     message = time.asctime() + ' ' + message
-    pipe = pipe or conn.pipeline()
+    pipe = pipe or fun_conn.pipeline()
     pipe.lpush(destination, message)
     # 对日志列表进行修剪，只包含最新的100条消息
     pipe.ltrim(destination, 0, 99)
@@ -66,7 +70,7 @@ def log_common(name, message, severity=logging.INFO, timeout=5):
                 pipe.rename(destination, destination + ':last')
                 pipe.set(start_key, hour_start)
             pipe.zincrby(destination, 1, message)
-            log_recent(name, message, severity, pipe)
+            log_recent(conn, name, message, severity, pipe)
             return
         except redis.exceptions.WatchError:
             continue
