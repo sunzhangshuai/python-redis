@@ -2,7 +2,7 @@ import redis
 import time
 import json
 import uuid
-from Unit6 import lock
+from Unit6 import DistributedLock
 
 pool = redis.ConnectionPool(host='localhost', port=6379, decode_responses=True)
 conn = redis.Redis(connection_pool=pool)
@@ -11,11 +11,11 @@ conn = redis.Redis(connection_pool=pool)
 def send_sold_email_via_queue(seller, item, price, buyer):
     """ 待发邮件入队
 
-    :param seller:
-    :param item:
-    :param price:
-    :param buyer:
-    :return:
+    @param seller:
+    @param item:
+    @param price:
+    @param buyer:
+    @return:
     """
 
     new_data = {
@@ -31,7 +31,7 @@ def send_sold_email_via_queue(seller, item, price, buyer):
 def process_sold_email_queue():
     """ 执行发邮件队列中的任务
 
-    :return:
+    @return:
     """
 
     while True:
@@ -54,9 +54,9 @@ def fetch_data_and_send_sold_email(to_send):
 def worker_watch_queue(queue, callbacks):
     """ 执行多个任务
 
-    :param queue:
-    :param callbacks:
-    :return:
+    @param queue:
+    @param callbacks:
+    @return:
     """
 
     while True:
@@ -72,9 +72,9 @@ def worker_watch_queue(queue, callbacks):
 def worker_watch_queues(queues, callbacks):
     """ 优先级队列
 
-    :param queues:
-    :param callbacks:
-    :return:
+    @param queues:
+    @param callbacks:
+    @return:
     """
 
     while True:
@@ -90,11 +90,11 @@ def worker_watch_queues(queues, callbacks):
 def execute_later(queue, name, args, delay=0):
     """ 推入延时队列
 
-    :param queue:
-    :param name:
-    :param args:
-    :param delay:
-    :return:
+    @param queue:
+    @param name:
+    @param args:
+    @param delay:
+    @return:
     """
 
     identifier = uuid.uuid4()
@@ -108,7 +108,7 @@ def execute_later(queue, name, args, delay=0):
 def poll_queue():
     """ 将延时队列内容移入任务队列
 
-    :return:
+    @return:
     """
 
     while True:
@@ -117,12 +117,12 @@ def poll_queue():
             time.sleep(.001)
             continue
         identifier, queue, name, args = json.loads(item[0][0])
-        locked = lock.acquire_lock(identifier, 10)
+        locked = DistributedLock.acquire_lock(identifier, 10)
         if not locked:
             continue
         if conn.zrem("delayed:", item[0][0]):
             conn.rpush("queue:" + queue, item)
-        lock.release_lock(identifier, locked)
+        DistributedLock.release_lock(identifier, locked)
 
 
 if __name__ == "__main__":

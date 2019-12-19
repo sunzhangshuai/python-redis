@@ -14,7 +14,7 @@ conn = redis.Redis(connection_pool=pool)
 def is_under_maintenance():
     """ 判断是否正在维护
 
-    :return:
+    @return:
     """
 
     global LAST_CHECKED, IS_UNDER_MAINTENANCE
@@ -28,10 +28,10 @@ def is_under_maintenance():
 def set_config(str_type, component, config):
     """ 存储组件配置信息
 
-    :param str_type:
-    :param component:
-    :param config:
-    :return:
+    @param str_type:
+    @param component:
+    @param config:
+    @return:
     """
 
     conn.set("config:%s:%s" % (str_type, component), json.dumps(config))
@@ -40,10 +40,10 @@ def set_config(str_type, component, config):
 def get_config(str_type, component, wait=1):
     """ 获取组件配置信息123
     
-    :param str_type: 
-    :param component: 
-    :param wait: 
-    :return: 
+    @param str_type: 
+    @param component: 
+    @param wait: 
+    @return:
     """
 
     key = "config:%s:%s" % (str_type, component)

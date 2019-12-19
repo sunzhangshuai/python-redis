@@ -11,7 +11,7 @@ sconn = redis.Redis(connection_pool=spool)
 def wait_for_sync():
     """ 等待同步
 
-    :return:
+    @return:
     """
     mconn.mset({
         "sunchen": "meinv",
@@ -35,10 +35,10 @@ def wait_for_sync():
 def list_item(itemid, sellerid, price):
     """ 上架商品
 
-    :param itemid: 商品id
-    :param sellerid: 卖家id
-    :param price: 商品价格
-    :return: 上架是否成功
+    @param itemid: 商品id
+    @param sellerid: 卖家id
+    @param price: 商品价格
+    @return: 上架是否成功
     """
     inventory = "inventory:%s" % sellerid
     item = "%s.%s" % (itemid, sellerid)
@@ -64,11 +64,11 @@ def list_item(itemid, sellerid, price):
 def purchase_item(buyerid, sellerid, itemid, lprice):
     """ 出售商品
 
-    :param buyerid:
-    :param sellerid:
-    :param itemid:
-    :param lprice:
-    :return:
+    @param buyerid:
+    @param sellerid:
+    @param itemid:
+    @param lprice:
+    @return:
     """
 
     inventory = "inventory:%s" % buyerid
@@ -102,10 +102,10 @@ def purchase_item(buyerid, sellerid, itemid, lprice):
 def update_token(token, user, item=None):
     """ 更新登录时间
 
-    :param token:
-    :param user:
-    :param item:
-    :return:
+    @param token:
+    @param user:
+    @param item:
+    @return:
     """
 
     login_time = time.time()
@@ -121,10 +121,10 @@ def update_token(token, user, item=None):
 def update_token_pipeline(token, user, item=None):
     """ 更新登录时间
 
-    :param token:
-    :param user:
-    :param item:
-    :return:
+    @param token:
+    @param user:
+    @param item:
+    @return:
     """
 
     login_time = time.time()
@@ -143,8 +143,8 @@ def update_token_pipeline(token, user, item=None):
 def benchmark_update_token(duration):
     """ 效率测试
 
-    :param duration:
-    :return:
+    @param duration:
+    @return:
     """
 
     for function in (update_token, update_token_pipeline):

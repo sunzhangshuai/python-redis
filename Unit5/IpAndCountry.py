@@ -9,8 +9,8 @@ conn = conn_redis.conn
 def ip_to_score(ip_address):
     """ 将ip转换为分值
 
-    :param string ip_address:
-    :return:
+    @param string ip_address:
+    @return:
     """
     score = 0
     for v in ip_address.split('.'):
@@ -23,7 +23,7 @@ def ip_to_score(ip_address):
 def import_ips_to_redis():
     """ 导入ip和城市的映射关系
 
-    :return:
+    @return:
     """
 
     filename = "./GeoLiteCity-Blocks.csv"
@@ -45,7 +45,7 @@ def import_ips_to_redis():
 def import_cities_to_redis():
     """ 导入城市详情
 
-    :return:
+    @return:
     """
 
     filename = "./GeoLiteCity-Locations.csv"
@@ -64,8 +64,8 @@ def import_cities_to_redis():
 def find_city_by_ip(ip_address):
     """ 根据ip查找城市信息
 
-    :param ip_address:
-    :return:
+    @param ip_address:
+    @return:
     """
 
     if isinstance(ip_address, str):

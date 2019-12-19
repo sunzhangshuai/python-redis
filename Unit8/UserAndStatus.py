@@ -1,5 +1,5 @@
 import conn_redis
-import Unit6.lock as lock
+import Unit6.DistributedLock as lock
 import time
 
 conn = conn_redis.conn
@@ -8,9 +8,9 @@ conn = conn_redis.conn
 def create_user(login, name):
     """ 创建用户信息散列
 
-    :param string login: 用户名
-    :param string name: 昵称
-    :return int: 用户id
+    @param string login: 用户名
+    @param string name: 昵称
+    @return int: 用户id
     """
 
     l_login = login.lower()
@@ -46,10 +46,10 @@ def create_user(login, name):
 def create_status(uid, message, **data):
     """ 创建状态消息散列
 
-    :param int uid: 用户id
-    :param string message: 消息
-    :param map data: 消息详情
-    :return int: 状态id
+    @param int uid: 用户id
+    @param string message: 消息
+    @param map data: 消息详情
+    @return int: 状态id
     """
 
     pipeline = conn.pipeline(True)

@@ -10,9 +10,9 @@ conn.close()
 def follow_user(uid, other_uid):
     """ 关注用户
 
-    :param uid: 关注者
-    :param other_uid: 被关注者
-    :return: 关注是否成功
+    @param uid: 关注者
+    @param other_uid: 被关注者
+    @return: 关注是否成功
     """
 
     following_key = 'following:' + uid
@@ -43,9 +43,9 @@ def follow_user(uid, other_uid):
 def unfollow_user(uid, other_uid):
     """ 取消关注
 
-    :param uid: 关注者
-    :param other_uid: 被关注者
-    :return: 取消是否成功
+    @param uid: 关注者
+    @param other_uid: 被关注者
+    @return: 取消是否成功
     """
 
     following_key = 'following:' + uid

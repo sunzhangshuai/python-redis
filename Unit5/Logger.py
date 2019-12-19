@@ -46,11 +46,11 @@ def log_recent(fun_conn, name, message, severity=logging.INFO, pipe=None):
 def log_common(name, message, severity=logging.INFO, timeout=5):
     """ 按小时记录日志出现的次数
 
-    :param string name: 日志名称
-    :param string message: 日志内容
-    :param string|int severity: 日志等级
-    :param int timeout: 超时时间
-    :return:
+    @param string name: 日志名称
+    @param string message: 日志内容
+    @param string|int severity: 日志等级
+    @param int timeout: 超时时间
+    @return:
     """
     severity = str(SEVERITY.get(severity, severity)).lower()
     destination = "common:%s:%s" % (name, severity)

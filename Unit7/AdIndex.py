@@ -8,10 +8,10 @@ AVERAGE_PER_1K = {}
 def cpc_to_ecpm(views, clicks, cpc):
     """ 计算cpc广告的ecpm （按千次展示计费的估值）
 
-    :param views: 展示千次数
-    :param clicks: 点击次数
-    :param cpc: 按点击次数收费的广告 每点击一次的费用
-    :return:
+    @param views: 展示千次数
+    @param clicks: 点击次数
+    @param cpc: 按点击次数收费的广告 每点击一次的费用
+    @return:
     """
 
     return cpc * clicks / views * 1000
@@ -20,10 +20,10 @@ def cpc_to_ecpm(views, clicks, cpc):
 def cpa_to_ecpm(views, actions, cpa):
     """ 计算cpa广告每展示千次收费多少
 
-    :param views: 展示千次数
-    :param actions: 执行次数
-    :param cpa: 每执行一次收费多少
-    :return:
+    @param views: 展示千次数
+    @param actions: 执行次数
+    @param cpa: 每执行一次收费多少
+    @return:
     """
 
     return cpa * actions / views * 1000
@@ -39,13 +39,13 @@ TO_ECPM = {
 def index_ad(conn, idx, locations, contents, ad_type, value):
     """ 基于位置和广告内容，为广告增加索引
 
-    :param conn:
-    :param idx: 广告id
-    :param locations: 广告位置数组
-    :param contents: 广告内容
-    :param ad_type: 广告类型（cpc，cpa，cpm）
-    :param value: 广告费用
-    :return:
+    @param conn:
+    @param idx: 广告id
+    @param locations: 广告位置数组
+    @param contents: 广告内容
+    @param ad_type: 广告类型（cpc，cpa，cpm）
+    @param value: 广告费用
+    @return:
     """
 
     pipeline = conn.pipeline(True)
@@ -65,9 +65,9 @@ def index_ad(conn, idx, locations, contents, ad_type, value):
 def match_location(pipe, locations):
     """ 基于位置执行广告定向操作的辅助函数
 
-    :param pipe:
-    :param locations: 位置
-    :return:
+    @param pipe:
+    @param locations: 位置
+    @return:
     """
 
     required = ['req:' + loc for loc in locations]
@@ -78,11 +78,11 @@ def match_location(pipe, locations):
 def finish_scoring(pipe, matched, base, content):
     """ 计算包含了内容匹配附加值的广告eCPM
 
-    :param pipe:
-    :param matched: 位置过滤后的广告
-    :param base: 广告的基础ecpm
-    :param content: 查询内容
-    :return:
+    @param pipe:
+    @param matched: 位置过滤后的广告
+    @param base: 广告的基础ecpm
+    @param content: 查询内容
+    @return:
     """
 
     bonus_ecpm = {}
@@ -100,10 +100,10 @@ def finish_scoring(pipe, matched, base, content):
 def target_ads(conn, locations, content):
     """ 通过位置和关键词附加值实现广告定向操作
 
-    :param conn:
-    :param locations:位置
-    :param content:查询内容
-    :return:
+    @param conn:
+    @param locations:位置
+    @param content:查询内容
+    @return:
     """
 
     pipe = conn.pipeline(True)
@@ -122,11 +122,11 @@ def target_ads(conn, locations, content):
 def record_targeting_result(conn, target_id, ad_id, words):
     """ 广告定向操作执行完后对结果的记录
 
-    :param conn:
-    :param target_id: 所有广告被浏览的次数
-    :param ad_id: 广告id
-    :param words: 检索使用到的关键词
-    :return:
+    @param conn:
+    @param target_id: 所有广告被浏览的次数
+    @param ad_id: 广告id
+    @param words: 检索使用到的关键词
+    @return:
     """
 
     pipe = conn.pipeline(True)
@@ -155,11 +155,11 @@ def record_targeting_result(conn, target_id, ad_id, words):
 def record_click(conn, target_id, ad_id, action=False):
     """ 记录点击次数或者动作执行次数
 
-    :param conn:
-    :param target_id: 所有广告的展示次数
-    :param ad_id: 广告id
-    :param action: 是否是动作执行
-    :return:
+    @param conn:
+    @param target_id: 所有广告的展示次数
+    @param ad_id: 广告id
+    @param action: 是否是动作执行
+    @return:
     """
 
     pipe = conn.pipeline(True)
@@ -189,9 +189,9 @@ def record_click(conn, target_id, ad_id, action=False):
 def update_cpms(conn, ad_id):
     """ 更新广告的ecpm 和 广告每个单词的ecpm附加值
 
-    :param conn:
-    :param ad_id:
-    :return:
+    @param conn:
+    @param ad_id:
+    @return:
     """
 
     pipeline = conn.pipeline(True)

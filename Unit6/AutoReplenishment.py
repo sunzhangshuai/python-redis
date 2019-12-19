@@ -125,8 +125,20 @@ def leave_guild(guild, user):
 
 
 if __name__ == '__main__':
-    # join_guild('zhangshuai', 'niujie')
-    # join_guild('zhangshuai', 'niujie2')
+    join_guild('zhangshuai', 'niujie')
+    join_guild('zhangshuai', 'niujie1')
+    join_guild('zhangshuai', 'niujie2')
+    join_guild('zhangshuai', 'niujie3')
+    join_guild('zhangshuai', 'niujie4')
+    join_guild('zhangshuai', 'niujie5')
+    join_guild('zhangshuai', 'niujie6')
+    join_guild('zhangshuai', 'niujie7')
+    join_guild('zhangshuai', 'niujie8')
+    join_guild('zhangshuai', 'niujie9')
+    join_guild('zhangshuai', 'niujie10')
+    join_guild('zhangshuai', 'niujiea')
+    join_guild('zhangshuai', 'niujieb')
+    join_guild('zhangshuai', 'aniujieb')
     # print(fetch_autocomplete_list('zhangshuai', 'niu'))
     # print(find_prefix_range('niu'))
     print(autocomplete_on_prefix('zhangshuai', 'niu'))

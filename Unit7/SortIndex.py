@@ -6,17 +6,17 @@ import uuid
 def search_and_zsort(conn, query, idx=None, ttl=30, execute=True, update=1, vote=0, start=0, num=20, desc=True):
     """ 进行搜索并根据更新时间和投票数量进行排序
 
-    :param conn:
-    :param query:
-    :param idx:
-    :param ttl:
-    :param execute:
-    :param update:
-    :param vote:
-    :param start:
-    :param num:
-    :param desc:
-    :return:
+    @param conn:
+    @param query:
+    @param idx:
+    @param ttl:
+    @param execute:
+    @param update:
+    @param vote:
+    @param start:
+    @param num:
+    @param desc:
+    @return:
     """
 
     if idx and not conn.expire("idx:" + idx, ttl):
@@ -42,11 +42,11 @@ def search_and_zsort(conn, query, idx=None, ttl=30, execute=True, update=1, vote
 def zintersert(conn, scores, ttl=30, **kw):
     """ 计算加权交集
 
-    :param conn:
-    :param scores:
-    :param ttl:
-    :param kw:
-    :return:
+    @param conn:
+    @param scores:
+    @param ttl:
+    @param kw:
+    @return:
     """
 
     return _zset_common(conn, 'zinterscore', dict(scores), ttl, **kw)
@@ -55,11 +55,11 @@ def zintersert(conn, scores, ttl=30, **kw):
 def zunion(conn, scores, ttl=30, **kw):
     """ 计算加权并集
 
-    :param conn:
-    :param scores:
-    :param ttl:
-    :param kw:
-    :return:
+    @param conn:
+    @param scores:
+    @param ttl:
+    @param kw:
+    @return:
     """
 
     return _zset_common(conn, 'zunionscore', dict(scores), ttl, **kw)
@@ -67,12 +67,12 @@ def zunion(conn, scores, ttl=30, **kw):
 
 def _zset_common(conn, method, scores, ttl=30, **kw):
     """ 计算加权交集，并集的公共方法
-    :param conn:
-    :param method:
-    :param scores:
-    :param ttl:
-    :param kw:
-    :return:
+    @param conn:
+    @param method:
+    @param scores:
+    @param ttl:
+    @param kw:
+    @return:
     """
 
     idx = str(uuid.uuid4())
@@ -90,9 +90,9 @@ def _zset_common(conn, method, scores, ttl=30, **kw):
 def string_to_score(string, ignore_case=False):
     """ 将字符串转为分值，只依据6个字符转换
 
-    :param string string:
-    :param ignore_case:
-    :return:
+    @param string string:
+    @param ignore_case:
+    @return:
     """
 
     if ignore_case:

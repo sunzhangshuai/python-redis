@@ -14,8 +14,8 @@ QUERY_RE = re.compile("[+-]?[a-z']{2,}")
 def tokenize(doc_content):
     """ 单词标记化
 
-    :param string doc_content: 文章内容
-    :return:
+    @param string doc_content: 文章内容
+    @return:
     """
 
     words = set()
@@ -29,10 +29,10 @@ def tokenize(doc_content):
 def index_document(conn, docId, doc_content):
     """ 为文章增加索引
 
-    :param conn:
-    :param string docId: 文章id
-    :param string doc_content: 文章内容
-    :return:
+    @param conn:
+    @param string docId: 文章id
+    @param string doc_content: 文章内容
+    @return:
     """
 
     words = tokenize(doc_content)
@@ -45,12 +45,12 @@ def index_document(conn, docId, doc_content):
 def _set_common(conn, method, names, ttl=30, execute=True):
     """ 计算交集，并集，差集的公共方法
 
-    :param conn:
-    :param method: 计算类别
-    :param names: 搜索的单词
-    :param ttl: 查询到的结果集key的过期时间
-    :param execute: 是否执行流水线事务
-    :return:
+    @param conn:
+    @param method: 计算类别
+    @param names: 搜索的单词
+    @param ttl: 查询到的结果集key的过期时间
+    @param execute: 是否执行流水线事务
+    @return:
     """
 
     idx = str(uuid.uuid4())
@@ -66,11 +66,11 @@ def _set_common(conn, method, names, ttl=30, execute=True):
 def intersect(conn, items, ttl, execute):
     """  查询包含items里所有单词的文章
 
-    :param conn:
-    :param items: 单词集合
-    :param ttl:
-    :param execute:
-    :return:
+    @param conn:
+    @param items: 单词集合
+    @param ttl:
+    @param execute:
+    @return:
     """
 
     return _set_common(conn, "sinterstore", items, ttl, execute)
@@ -79,11 +79,11 @@ def intersect(conn, items, ttl, execute):
 def union(conn, items, ttl, execute):
     """ 包含这个或者包含那个的文章集合
 
-    :param conn:
-    :param items:
-    :param ttl:
-    :param execute:
-    :return:
+    @param conn:
+    @param items:
+    @param ttl:
+    @param execute:
+    @return:
     """
 
     return _set_common(conn, "sunionstore", items, ttl, execute)
@@ -92,11 +92,11 @@ def union(conn, items, ttl, execute):
 def difference(conn, items, ttl, execute):
     """ 包含这个不包含那个的文章集合
 
-    :param conn:
-    :param items:
-    :param ttl:
-    :param execute:
-    :return:
+    @param conn:
+    @param items:
+    @param ttl:
+    @param execute:
+    @return:
     """
 
     return _set_common(conn, "sdiffstore", items, ttl, execute)
@@ -105,8 +105,8 @@ def difference(conn, items, ttl, execute):
 def parse(query):
     """ 对搜索内容进行语法解析：【差【交【并】，【并】】】
 
-    :param string query:
-    :return:
+    @param string query:
+    @return:
     """
 
     # 这个集合用于存储不需要的单词
@@ -140,11 +140,11 @@ def parse(query):
 def parse_and_search(conn, query, ttl=30, execute=True):
     """ 解析查询语句，并返回查询结果
 
-    :param conn:
-    :param query:
-    :param ttl:
-    :param execute:
-    :return:
+    @param conn:
+    @param query:
+    @param ttl:
+    @param execute:
+    @return:
     """
 
     all_want, unwanted = parse(query)
@@ -169,15 +169,15 @@ def parse_and_search(conn, query, ttl=30, execute=True):
 def search_and_sort(conn, query, idx=None, sort='-updated', ttl=300, execute=True, start=0, num=20):
     """ 为搜索结果进行排序
 
-    :param conn:
-    :param query:
-    :param idx:
-    :param sort:
-    :param ttl:
-    :param execute:
-    :param start:
-    :param num:
-    :return:
+    @param conn:
+    @param query:
+    @param idx:
+    @param sort:
+    @param ttl:
+    @param execute:
+    @param start:
+    @param num:
+    @return:
     """
 
     desc = sort.startswith('-')

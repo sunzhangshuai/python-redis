@@ -8,9 +8,9 @@ conn = redis.Redis(connection_pool=pool)
 def process_log(path, callback):
     """ 数据恢复
 
-    :param path:
-    :param callback:
-    :return:
+    @param path:
+    @param callback:
+    @return:
     """
 
     current_file, offset = conn.mget('progress:ipfind', 'progress:position')

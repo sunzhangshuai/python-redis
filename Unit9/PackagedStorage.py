@@ -25,9 +25,9 @@ USERS_PRE_SHARD = 2 ** 20
 def get_code(country, state):
     """ 负责将给定的国家和地区转换成编码
 
-    :param country: 国家
-    :param state: 城市
-    :return:
+    @param country: 国家
+    @param state: 城市
+    @return:
     """
 
     # 寻找国家或地区对应的偏移量
@@ -49,10 +49,10 @@ def get_code(country, state):
 def set_location(user_id, country, state):
     """ 存储用户位置
 
-    :param user_id: 用户id
-    :param country: 国家
-    :param state: 城市
-    :return:
+    @param user_id: 用户id
+    @param country: 国家
+    @param state: 城市
+    @return:
     """
 
     code = get_code(country, state)
@@ -79,10 +79,10 @@ def aggregate_location():
 def update_aggregates(countries, states, codes):
     """ 将位置编码转换成国家信息或地区信息
 
-    :param countries:
-    :param states:
-    :param codes:
-    :return:
+    @param countries:
+    @param states:
+    @param codes:
+    @return:
     """
 
     for code in codes:
@@ -105,8 +105,8 @@ def update_aggregates(countries, states, codes):
 def aggregate_location_list(user_ids):
     """ 根据给定的用户id进行位置聚合计算
 
-    :param user_ids:
-    :return:
+    @param user_ids:
+    @return:
     """
 
     pipe = conn.pipeline(False)

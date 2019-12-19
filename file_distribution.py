@@ -13,8 +13,8 @@ aggregates = collections.defaultdict(lambda: collections.defaultdict(int))
 def daily_country_aggregate(line):
     """ 一个本地聚合计算回调函数，每天以国家维度对日志进行聚合
 
-    :param str line:
-    :return:
+    @param str line:
+    @return:
     """
     if line:
         line = line.split()
@@ -31,8 +31,8 @@ def daily_country_aggregate(line):
 def find_city_by_ip_local(ip):
     """ 通过ip从本地查找城市
 
-    :param ip:
-    :return:
+    @param ip:
+    @return:
     """
 
     return ip
@@ -41,12 +41,12 @@ def find_city_by_ip_local(ip):
 def copy_logs_to_redis(path, channel, count=10, limit=2 * 30, quit_when_done=True):
     """ 复制日志到redis
 
-    :param path:
-    :param channel:
-    :param count:
-    :param limit:
-    :param quit_when_done:
-    :return:
+    @param path:
+    @param channel:
+    @param count:
+    @param limit:
+    @param quit_when_done:
+    @return:
     """
 
     byte_in_redis = 0
@@ -90,10 +90,10 @@ def copy_logs_to_redis(path, channel, count=10, limit=2 * 30, quit_when_done=Tru
 def _clean(channel, waiting, count):
     """ 对redis清理的详细步骤
 
-    :param channel:
-    :param waiting:
-    :param count:
-    :return:
+    @param channel:
+    @param waiting:
+    @param count:
+    @return:
     """
 
     while not waiting:

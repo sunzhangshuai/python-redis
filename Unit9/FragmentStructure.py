@@ -15,11 +15,11 @@ conn = conn_redis.conn
 def shard_key(base, key, total_elements, shard_size):
     """ 获取分片后的key
 
-    :param base: 基础key
-    :param key: 要存的map key
-    :param total_elements: 预计的成员总数
-    :param shard_size: 每个分片的尺寸
-    :return:
+    @param base: 基础key
+    @param key: 要存的map key
+    @param total_elements: 预计的成员总数
+    @param shard_size: 每个分片的尺寸
+    @return:
     """
 
     if isinstance(key, int) or key.isdigit():
@@ -33,12 +33,12 @@ def shard_key(base, key, total_elements, shard_size):
 def shard_hset(base, key, value, total_elements, shard_size):
     """ 分片版 hset
 
-    :param base:
-    :param key:
-    :param value:
-    :param total_elements:
-    :param shard_size:
-    :return:
+    @param base:
+    @param key:
+    @param value:
+    @param total_elements:
+    @param shard_size:
+    @return:
     """
 
     shard = shard_key(base, key, total_elements, shard_size)
@@ -48,11 +48,11 @@ def shard_hset(base, key, value, total_elements, shard_size):
 def shard_hget(base, key, total_elements, shard_size):
     """ 分片版 hget
 
-    :param base:
-    :param key:
-    :param total_elements:
-    :param shard_size:
-    :return:
+    @param base:
+    @param key:
+    @param total_elements:
+    @param shard_size:
+    @return:
     """
 
     shard = shard_key(base, key, total_elements, shard_size)
@@ -62,11 +62,11 @@ def shard_hget(base, key, total_elements, shard_size):
 def shard_sadd(base, member, total_elements, shard_size):
     """ 分片sadd
 
-    :param base:
-    :param member:
-    :param total_elements:
-    :param shard_size:
-    :return:
+    @param base:
+    @param member:
+    @param total_elements:
+    @param shard_size:
+    @return:
     """
     shard_id = shard_key(base, "X" + str(member), total_elements, shard_size)
     return conn.sadd(shard_id, member)
@@ -75,8 +75,8 @@ def shard_sadd(base, member, total_elements, shard_size):
 def count_visit(uid):
     """ 计算唯一访客量
 
-    :param str uid:
-    :return:
+    @param str uid:
+    @return:
     """
     today = datetime.date.today()
     key = "unique:%s" % today.isoformat()
@@ -89,9 +89,9 @@ def count_visit(uid):
 def get_expected(key, today):
     """ 每天预计的访问量
 
-    :param key:
-    :param today:
-    :return:
+    @param key:
+    @param today:
+    @return:
     """
     if key in EXPECTED:
         return EXPECTED[key]

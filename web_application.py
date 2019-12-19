@@ -42,8 +42,8 @@ def can_cache(request):
 def check_token(token):
     """ 验证登录
 
-    :param token:
-    :return:
+    @param token:
+    @return:
     """
     return conn.hget('login:', token)
 
@@ -51,10 +51,10 @@ def check_token(token):
 # def update_token(token, user, item=None):
 #     """ 更新登录时间
 #
-#     :param token:
-#     :param user:
-#     :param item:
-#     :return:
+#     @param token:
+#     @param user:
+#     @param item:
+#     @return:
 #     """
 #
 #     login_time = time.time()
@@ -69,10 +69,10 @@ def check_token(token):
 def update_token(token, user, item=None):
     """ 更新登录时间
 
-    :param token:
-    :param user:
-    :param item:
-    :return:
+    @param token:
+    @param user:
+    @param item:
+    @return:
     """
 
     login_time = time.time()
@@ -88,7 +88,7 @@ def update_token(token, user, item=None):
 def rescale_viewed():
     """ 守护进程，定期清理不常被浏览的商品缓存
 
-    :return:
+    @return:
     """
 
     if not QUIT:
@@ -100,7 +100,7 @@ def rescale_viewed():
 def clean_sessions():
     """ 定期清理旧的回话数据
 
-    :return:
+    @return:
     """
     while not QUIT:
         size = conn.zcard('recent:')
@@ -129,10 +129,10 @@ def clean_sessions():
 def add_to_card(token, item, count):
     """ 购物车
 
-    :param token:
-    :param item:
-    :param count:
-    :return:
+    @param token:
+    @param item:
+    @param count:
+    @return:
     """
 
     if count <= 0:
@@ -144,9 +144,9 @@ def add_to_card(token, item, count):
 def cache_request(request, callback):
     """ 通过缓存请求页面
 
-    :param request:
-    :param callback:
-    :return:
+    @param request:
+    @param callback:
+    @return:
     """
 
     if not can_cache(request):
@@ -164,9 +164,9 @@ def cache_request(request, callback):
 def schedule_row_cache(row_id, delay):
     """ 添加促销调度
 
-    :param row_id:
-    :param delay:
-    :return:
+    @param row_id:
+    @param delay:
+    @return:
     """
     conn.zadd('delay:', {row_id, delay})
     conn.zadd('schedule:', {row_id, time.time()})
@@ -175,7 +175,7 @@ def schedule_row_cache(row_id, delay):
 def cache_rows():
     """ 守护进程 缓存数据
 
-    :return:
+    @return:
     """
     while not QUIT:
         job = conn.zrange('schedule:', 0, 0, withscores=True)

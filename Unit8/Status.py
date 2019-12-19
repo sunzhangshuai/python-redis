@@ -1,6 +1,6 @@
 import conn_redis
 import Unit8.UserAndStatus as status
-import Unit6.lock as lock_util
+import Unit6.DistributedLock as lock_util
 
 POSTS_PER_PASS = 1000
 conn = conn_redis.conn
@@ -9,10 +9,10 @@ conn = conn_redis.conn
 def post_status(uid, message, **data):
     """ 发布消息
 
-    :param uid: 发布消息的用户id
-    :param message: 消息内容
-    :param data: 消息数组
-    :return:
+    @param uid: 发布消息的用户id
+    @param message: 消息内容
+    @param data: 消息数组
+    @return:
     """
 
     status_id = status.create_status(uid, message, **data)
@@ -30,10 +30,10 @@ def post_status(uid, message, **data):
 def syndicate_status(uid, post, start=0):
     """ 同步消息给关注的人
 
-    :param uid: 被关注者
-    :param post: 被关注者发送的消息id+发布时间
-    :param start: 关注者第一位
-    :return:
+    @param uid: 被关注者
+    @param post: 被关注者发送的消息id+发布时间
+    @param start: 关注者第一位
+    @return:
     """
 
     followers = conn.zrangebyscore("followers:" + uid, start, 'inf', 0, POSTS_PER_PASS, withscores=True)
@@ -53,9 +53,9 @@ def execute_later():
 def delete_status(uid, status_id):
     """ 删除发布的消息
 
-    :param uid: 发布消息的用户
-    :param status_id: 消息id
-    :return:
+    @param uid: 发布消息的用户
+    @param status_id: 消息id
+    @return:
     """
 
     key = "status%s" % status_id

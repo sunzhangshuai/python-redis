@@ -12,10 +12,10 @@ redis_conn = redis.Redis(connection_pool=pool)
 def article_vote(conn, user, article):
     """ 对文章投票
 
-    :param conn:
-    :param user:
-    :param article:
-    :return:
+    @param conn:
+    @param user:
+    @param article:
+    @return:
     """
     cutoff = time.time() - ONE_WEEK_IN_SECONDS
 
@@ -32,11 +32,11 @@ def article_vote(conn, user, article):
 def post_article(conn, user, title, link):
     """ 发布文章
 
-    :param conn:
-    :param user:
-    :param title:
-    :param link:
-    :return:
+    @param conn:
+    @param user:
+    @param title:
+    @param link:
+    @return:
     """
 
     article_id = str(conn.incr('article:'))
@@ -65,10 +65,10 @@ def post_article(conn, user, title, link):
 def get_article(conn, page, order='score:'):
     """ 根据排序获取文章
 
-    :param conn:
-    :param page:
-    :param order:
-    :return:
+    @param conn:
+    @param page:
+    @param order:
+    @return:
     """
 
     start = (page - 1) * ARTICLES_PRE_PAGE
@@ -92,11 +92,11 @@ def get_article(conn, page, order='score:'):
 def add_remove_group(conn, article_id, to_add=[], to_remove=[]):
     """ 对文章分组
 
-    :param conn:
-    :param article_id:
-    :param to_add:
-    :param to_remove:
-    :return:
+    @param conn:
+    @param article_id:
+    @param to_add:
+    @param to_remove:
+    @return:
     """
 
     article = 'article:' + article_id
@@ -109,11 +109,11 @@ def add_remove_group(conn, article_id, to_add=[], to_remove=[]):
 def get_group_articles(conn, group, page, order='score:'):
     """ 分组排序
 
-    :param conn:
-    :param group:
-    :param page:
-    :param order:
-    :return:
+    @param conn:
+    @param group:
+    @param page:
+    @param order:
+    @return:
     """
 
     key = order + group
@@ -128,10 +128,10 @@ def get_group_articles(conn, group, page, order='score:'):
 def article_vote_new(conn, user, article, type="agree"):
     """ 对文章投票
 
-    :param conn:
-    :param user:
-    :param article:
-    :return:
+    @param conn:
+    @param user:
+    @param article:
+    @return:
     """
     cutoff = time.time() - ONE_WEEK_IN_SECONDS
 
@@ -153,11 +153,11 @@ def article_vote_new(conn, user, article, type="agree"):
 def post_article_new(conn, user, title, link):
     """ 发布文章
 
-    :param conn:
-    :param user:
-    :param title:
-    :param link:
-    :return:
+    @param conn:
+    @param user:
+    @param title:
+    @param link:
+    @return:
     """
 
     article_id = str(conn.incr('article:'))

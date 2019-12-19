@@ -18,10 +18,10 @@ PRECISION = [1, 5, 60, 300, 3600, 18000, 86400]
 def update_counter(name, count=1, now=None):
     """ 更新计数器
 
-    :param string name: 计数器名称
-    :param int count: 计数器数量
-    :param int now: 当前时间
-    :return:
+    @param string name: 计数器名称
+    @param int count: 计数器数量
+    @param int now: 当前时间
+    @return:
     """
 
     now = now or time.time()
@@ -37,10 +37,10 @@ def update_counter(name, count=1, now=None):
 def get_counter(name, prec, reverse=False):
     """ 获取指定计数器的计数数据
 
-    :param string name: 计数器名称
-    :param int prec: 计数维度
-    :param bool reverse: 是否倒序
-    :return:
+    @param string name: 计数器名称
+    @param int prec: 计数维度
+    @param bool reverse: 是否倒序
+    @return:
     """
 
     str_hash = "%s:%s" % (prec, name)
@@ -55,7 +55,7 @@ def get_counter(name, prec, reverse=False):
 def clean_counter():
     """ 定期清理计数器
 
-    :return:
+    @return:
     """
 
     pipe = conn.pipeline()
@@ -117,11 +117,11 @@ def update_stats(context, value, str_type, timeout=5):
         "count": 150
     }
 
-    :param string context: 上文
-    :param int value: 所用时间
-    :param string str_type: 下文
-    :param int timeout: 程序超时时间
-    :return:
+    @param string context: 上文
+    @param int value: 所用时间
+    @param string str_type: 下文
+    @param int timeout: 程序超时时间
+    @return:
     """
 
     destination = "stats:%s:%s" % (context, str_type)
@@ -159,9 +159,9 @@ def update_stats(context, value, str_type, timeout=5):
 def get_stats(context, str_type):
     """ 获取统计数据
 
-    :param string context: 上文
-    :param string str_type: 下文
-    :return dict:
+    @param string context: 上文
+    @param string str_type: 下文
+    @return dict:
     """
 
     destination = "stats:%s:%s" % (context, str_type)
@@ -185,8 +185,8 @@ def get_stats(context, str_type):
 def access_time(context):
     """ 上下文管理器
 
-    :param context:
-    :return:
+    @param context:
+    @return:
     """
 
     start = time.time()
@@ -203,9 +203,9 @@ def access_time(context):
 def process_view(callback, path, **arg):
     """ 上下文管理器使用方法
 
-    :param callback:
-    :param path:
-    :return:
+    @param callback:
+    @param path:
+    @return:
     """
     with access_time(path):
         return callback(**arg)

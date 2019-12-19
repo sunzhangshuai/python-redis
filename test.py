@@ -9,11 +9,11 @@ conn = redis.Redis(connection_pool=pool)
 def send_sold_email_via_queue(seller, item, price, buyer):
     """ 待发邮件入队
 
-    :param seller:
-    :param item:
-    :param price:
-    :param buyer:
-    :return:
+    @param seller:
+    @param item:
+    @param price:
+    @param buyer:
+    @return:
     """
 
     data = {
@@ -29,7 +29,7 @@ def send_sold_email_via_queue(seller, item, price, buyer):
 def process_sold_email_queue():
     """ 执行发邮件队列中的任务
 
-    :return:
+    @return:
     """
 
     while True:

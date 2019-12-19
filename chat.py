@@ -1,7 +1,7 @@
 import redis
 import time
 import json
-from Unit6 import lock
+from Unit6 import DistributedLock
 
 pool = redis.ConnectionPool(host='localhost', port=6379, decode_responses=True)
 conn = redis.Redis(connection_pool=pool)
@@ -9,11 +9,11 @@ conn = redis.Redis(connection_pool=pool)
 
 def create_chat(sender, recipients, message, chat_id=None):
     """ 创建群组
-    :param sender:
-    :param recipients:
-    :param message:
-    :param chat_id:
-    :return:
+    @param sender:
+    @param recipients:
+    @param message:
+    @param chat_id:
+    @return:
     """
 
     chat_id = chat_id or str(conn.incr("ids:chat:"))
@@ -29,13 +29,13 @@ def create_chat(sender, recipients, message, chat_id=None):
 
 def send_message(sender, message, chat_id):
     """ 发送消息
-    :param sender:
-    :param message:
-    :param chat_id:
-    :return:
+    @param sender:
+    @param message:
+    @param chat_id:
+    @return:
     """
 
-    identifier = lock.acquire_lock("chat:" + chat_id)
+    identifier = DistributedLock.acquire_lock("chat:" + chat_id)
     if not identifier:
         raise Exception("Could not get the lock")
     try:
@@ -48,15 +48,15 @@ def send_message(sender, message, chat_id):
         }
         conn.zadd("msg:" + chat_id, {json.dumps(message_info): message_id})
     finally:
-        lock.release_lock("chat:" + chat_id, identifier)
+        DistributedLock.release_lock("chat:" + chat_id, identifier)
     return chat_id
 
 
 def fetch_pending_message(recipient):
     """ 读取消息
 
-    :param recipient:
-    :return:
+    @param recipient:
+    @return:
     """
 
     seen = conn.zrange("seen:" + recipient, 0, -1, withscores=True)
@@ -83,9 +83,9 @@ def fetch_pending_message(recipient):
 def join_chat(chat_id, user_id):
     """ 加入群组
 
-    :param chat_id:
-    :param user_id:
-    :return:
+    @param chat_id:
+    @param user_id:
+    @return:
     """
 
     mid = int(conn.get("mid:" + chat_id))
@@ -98,9 +98,9 @@ def join_chat(chat_id, user_id):
 def leave_chat(chat_id, user_id):
     """ 移出群聊
 
-    :param chat_id:
-    :param user_id:
-    :return:
+    @param chat_id:
+    @param user_id:
+    @return:
     """
     pipe = conn.pipeline(True)
     pipe.zrem("chat:" + chat_id, user_id)
