@@ -1,20 +1,19 @@
-import redis
+import conn_redis
 import time
 import json
 import uuid
 from Unit6 import DistributedLock
 
-pool = redis.ConnectionPool(host='localhost', port=6379, decode_responses=True)
-conn = redis.Redis(connection_pool=pool)
+conn = conn_redis.conn
 
 
 def send_sold_email_via_queue(seller, item, price, buyer):
     """ 待发邮件入队
 
-    @param seller:
-    @param item:
-    @param price:
-    @param buyer:
+    @param string seller: 卖方
+    @param string item: 产品
+    @param float price: 价格
+    @param string buyer: 买方
     @return:
     """
 
@@ -40,6 +39,7 @@ def process_sold_email_queue():
             continue
         to_send = json.loads(packed[1])
         try:
+            # 执行脚本
             fetch_data_and_send_sold_email(to_send)
         except RuntimeError:
             pass
@@ -54,8 +54,8 @@ def fetch_data_and_send_sold_email(to_send):
 def worker_watch_queue(queue, callbacks):
     """ 执行多个任务
 
-    @param queue:
-    @param callbacks:
+    @param string queue: 队列名称
+    @param dict callbacks: 回调方法列表
     @return:
     """
 
@@ -72,8 +72,8 @@ def worker_watch_queue(queue, callbacks):
 def worker_watch_queues(queues, callbacks):
     """ 优先级队列
 
-    @param queues:
-    @param callbacks:
+    @param list queues: 队列名称列表
+    @param dict callbacks: 回调方法列表
     @return:
     """
 
@@ -90,10 +90,10 @@ def worker_watch_queues(queues, callbacks):
 def execute_later(queue, name, args, delay=0):
     """ 推入延时队列
 
-    @param queue:
-    @param name:
-    @param args:
-    @param delay:
+    @param string queue: 队列名称
+    @param string name: 队列执行方法名
+    @param dict args: 参数
+    @param int delay: 延时时间
     @return:
     """
 
