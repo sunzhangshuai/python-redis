@@ -1,21 +1,19 @@
-import redis
+import conn_redis
 import time
 import threading
 
-pool = redis.ConnectionPool(host='localhost', port=6379, decode_responses=True)
-conn = redis.Redis(connection_pool=pool)
+conn = conn_redis.conn
 
 
-def notrans():
-    print(conn.incr('notrans:'))
+def no_trans():
+    print(conn.incr('no_trans:'))
     time.sleep(0.1)
-    print(conn.decr('notrans:'))
+    print(conn.decr('no_trans:'))
 
 
-if 1:
+if True:
     for i in [1, 2, 3]:
-        threading.Thread(target=notrans).start()
-
+        threading.Thread(target=no_trans).start()
     time.sleep(0.5)
 
 
@@ -28,8 +26,7 @@ def trans():
     print(result)
 
 
-if 1:
+if True:
     for i in [1, 2, 3]:
         threading.Thread(target=trans).start()
-
     time.sleep(0.5)

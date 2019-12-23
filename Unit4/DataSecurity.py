@@ -1,20 +1,16 @@
-import redis
+import conn_redis
 import os
 
-pool = redis.ConnectionPool(host='localhost', port=6379, decode_responses=True)
-conn = redis.Redis(connection_pool=pool)
+conn = conn_redis.conn
 
 
 def process_log(path, callback):
-    """ 数据恢复
-
-    @param path:
-    @param callback:
-    @return:
     """
-
+    数据恢复
+    @param string path: 日志路径
+    @param function callback: 回调方法
+    """
     current_file, offset = conn.mget('progress:ipfind', 'progress:position')
-
     pipe = conn.pipeline()
 
     def update_progress():
@@ -23,32 +19,25 @@ def process_log(path, callback):
             'progress:position': offset
         })
         pipe.execute()
-
-    for fname in sorted(os.listdir(path)):
+    for f_name in sorted(os.listdir(path)):
         if current_file is None:
-            current_file = fname
+            current_file = f_name
             offset = 0
-
-        if fname < current_file:
+        if f_name < current_file:
             continue
-
-        inp = open(os.path.join(path, fname), 'rb')
-        if fname == current_file:
+        inp = open(os.path.join(path, f_name), 'rb')
+        if f_name == current_file:
             inp.seek(int(offset))
         else:
             offset = 0
-
         for lno, line in enumerate(inp):
             callback(pipe, line)
             offset = int(offset) + len(line)
-
             if not (lno + 1) % 1000:
                 update_progress()
         update_progress()
-
         current_file = None
         inp.close()
-
     pass
 
 
