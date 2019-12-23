@@ -48,24 +48,6 @@ def check_token(token):
     return conn.hget('login:', token)
 
 
-# def update_token(token, user, item=None):
-#     """ 更新登录时间
-#
-#     @param token:
-#     @param user:
-#     @param item:
-#     @return:
-#     """
-#
-#     login_time = time.time()
-#     conn.hset('login:', token, user)
-#     conn.zadd('recent:', {token: login_time})
-#
-#     if item:
-#         conn.zadd('viewed:' + token, item, time)
-#         conn.zremrangebyrank('viewed:' + token, 0, -26)
-
-
 def update_token(token, user, item=None):
     """ 更新登录时间
 
@@ -76,13 +58,38 @@ def update_token(token, user, item=None):
     """
 
     login_time = time.time()
-    conn.hset('login:', token, user)
-    conn.zadd('recent:', {token: login_time})
+    pipe = conn.pipeline(False)
+    pipe.hset('login:', token, user)
+    pipe.zadd('recent:', {token: login_time})
 
     if item:
-        conn.zadd('viewed:' + token, {item: login_time})
-        conn.zremrangebyrank('viewed:' + token, 0, -26)
-        conn.zincrby('viewed:', -1, item)
+        pipe.zadd('viewed:' + token, {item: login_time})
+        pipe.zremrangebyrank('viewed:' + token, 0, -26)
+        pipe.zincrby('viewed:', -1, item)
+
+    pipe.execute()
+        
+        
+def update_token_pipeline(token, user, item=None):
+    """ 更新登录时间
+
+    @param token:
+    @param user:
+    @param item:
+    @return:
+    """
+
+    login_time = time.time()
+    pipe = conn.pipeline(False)
+    pipe.hset('login:', token, user)
+    pipe.zadd('recent:', {token: login_time})
+
+    if item:
+        pipe.zadd('viewed:' + token, {item: login_time})
+        pipe.zremrangebyrank('viewed:' + token, 0, -26)
+        pipe.zincrby('viewed:', -1, item)
+
+    pipe.execute()
 
 
 def rescale_viewed():
