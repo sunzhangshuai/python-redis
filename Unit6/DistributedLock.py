@@ -107,7 +107,7 @@ def acquire_semaphore(se_name, limit, timeout=10):
     @param string se_name: 锁名称
     @param int limit: 允许同时获取锁的进程数
     @param int timeout: 超时时间
-    @return: 信号量的过期时间
+    @return: 锁标识
     """
     identifier = str(uuid.uuid4())
     now = time.time()
@@ -115,7 +115,7 @@ def acquire_semaphore(se_name, limit, timeout=10):
     pipe.zremrangebyscore(se_name, '-inf', now - timeout)
     pipe.zadd(se_name, {identifier: now})
     pipe.zrank(se_name, identifier)
-    if pipe.execute([-1]) < limit:
+    if pipe.execute()[-1] < limit:
         return identifier
     conn.zrem(se_name, identifier)
     return None
@@ -138,7 +138,7 @@ def acquire_fair_semaphore(se_name, limit, timeout=10):
     @param string se_name: 锁名称
     @param int limit: 允许同时获取锁的进程数
     @param float timeout: 超时时间
-    @return:
+    @return: 锁标识
     """
     identifier = str(uuid.uuid4())
     c_zset = se_name + ":owner"
@@ -149,8 +149,8 @@ def acquire_fair_semaphore(se_name, limit, timeout=10):
     pipe.zinterstore(c_zset, {c_zset: 1, se_name: 0})
     pipe.incr(ctr)
     count = pipe.execute()[-1]
-    pipe.zadd(c_zset, {count: identifier})
-    pipe.zadd(se_name, {now: identifier})
+    pipe.zadd(c_zset, {identifier: count})
+    pipe.zadd(se_name, {identifier: now})
     pipe.zrank(c_zset, identifier)
     if pipe.execute()[-1] < limit:
         return identifier
@@ -160,49 +160,50 @@ def acquire_fair_semaphore(se_name, limit, timeout=10):
     return None
 
 
-def release_fair_semaphore(sename, identifier):
+def release_fair_semaphore(se_name, identifier):
     """ 释放公平的计数信号量
 
-    @param sename:
-    @param identifier:
+    @param string se_name: 锁名称
+    @param string identifier: 锁标识
     @return:
     """
 
     pipe = conn.pipeline()
-    pipe.zrem(sename, identifier)
-    pipe.zrem(sename + ":owner", identifier)
+    pipe.zrem(se_name, identifier)
+    pipe.zrem(se_name + ":owner", identifier)
     return pipe.execute()[0]
 
 
-def refresh_fair_semaphore(sename, identifier):
+def refresh_fair_semaphore(se_name, identifier):
     """ 刷新信号量
 
-    @param sename:
-    @param identifier:
+    @param string se_name: 锁名称
+    @param string identifier: 锁标识
     @return:
     """
-    if conn.zadd(sename, {identifier: time.time()}):
-        release_fair_semaphore(sename, identifier)
+    if conn.zadd(se_name, {identifier: time.time()}):
+        release_fair_semaphore(se_name, identifier)
         return False
     return True
 
 
-def acquire_semaphore_with_lock(sename, limit, timeout=10):
+def acquire_semaphore_with_lock(se_name, limit, timeout=10):
     """ 消除公平信号量的竞争条件
 
-    @param sename:
-    @param limit:
-    @param timeout:
+    @param string se_name: 锁名称
+    @param int limit: 允许同时获取锁的进程数
+    @param int timeout: 超时时间
     @return:
     """
 
-    identifier = acquire_lock(sename, .001)
+    identifier = acquire_lock(se_name, .001)
     if identifier:
         try:
-            return acquire_fair_semaphore(sename, limit, timeout)
+            return acquire_fair_semaphore(se_name, limit, timeout)
         finally:
-            release_lock(sename, identifier)
+            release_lock(se_name, identifier)
 
 
 if __name__ == '__main__':
-    print(acquire_lock('wodege'))
+    print(acquire_fair_semaphore('wodege', 4, 1))
+    # print(acquire_lock('wodege'))
