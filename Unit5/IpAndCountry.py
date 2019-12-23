@@ -77,8 +77,6 @@ def find_city_by_ip(ip_address):
         return None
 
     city_id = str(city_id).split("_")[0]
-    print(city_id)
-
     return json.loads(conn.hget("cityid2city:", city_id))
 
 
