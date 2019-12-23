@@ -55,7 +55,7 @@ def index_ad(conn, idx, locations, contents, ad_type, value):
     for word in words:
         pipeline.zadd('idx:' + word, {idx, 0})
     rvalue = TO_ECPM[ad_type](1000, 1, AVERAGE_PER_1K.get(ad_type, 1), value)
-    pipeline.hset('type:', idx, ad_type)
+    pipeline.hset('vote_type:', idx, ad_type)
     pipeline.zadd('idx:ad:value:', {idx: rvalue})
     pipeline.zadd('ad:base_value:', {idx: value})
     pipeline.sadd('terms:' + idx, *list(words))
@@ -139,8 +139,8 @@ def record_targeting_result(conn, target_id, ad_id, words):
         pipe.sadd(matched_key, *matched)
         pipe.expire(matched_key, 900)
     # 为每个种类的广告记录展示次数
-    ad_type = conn.hget("type:", ad_id)
-    pipe.incr("type:%s:views:" % ad_type)
+    ad_type = conn.hget("vote_type:", ad_id)
+    pipe.incr("vote_type:%s:views:" % ad_type)
 
     for word in matched:
         # 为每个单词记录展示次数
@@ -165,7 +165,7 @@ def record_click(conn, target_id, ad_id, action=False):
     pipe = conn.pipeline(True)
     click_key = "click:%s" % ad_id
     matched_key = "terms:matched:%s" % target_id
-    ad_type = conn.hget("type:", ad_id)
+    ad_type = conn.hget("vote_type:", ad_id)
     # 如果这是一个按照动作计费的广告，并且被匹配的单词仍然存在，刷新超时时间
     if ad_type == "cpa":
         pipe.expire(matched_key, 900)
@@ -174,9 +174,9 @@ def record_click(conn, target_id, ad_id, action=False):
             click_key = "actions:%s" % ad_id
     # 根据广告的类型，记录一个全局的点击/执行动作计数器
     if action and ad_type == "cpa":
-        pipe.incr("type:%s:actions" % ad_type)
+        pipe.incr("vote_type:%s:actions" % ad_type)
     else:
-        pipe.incr("type:%s:clicks" % ad_type)
+        pipe.incr("vote_type:%s:clicks" % ad_type)
     # 为广告以及所有被定向至该广告的单词记录点击次数(或动作)
     matched = list(conn.smembers(matched_key))
     matched.append('')
@@ -196,7 +196,7 @@ def update_cpms(conn, ad_id):
 
     pipeline = conn.pipeline(True)
     # 获取广告的类型和价格，以及广告包含的所有单词
-    pipeline.hget('type:', ad_id)
+    pipeline.hget('vote_type:', ad_id)
     pipeline.zscore('ad:base_value:', ad_id)
     pipeline.smembers('terms:' + ad_id)
     ad_type, base_value, words = pipeline.execute()
@@ -205,8 +205,8 @@ def update_cpms(conn, ad_id):
     if ad_type == 'cpa':
         which = 'actions'
     # 获取类型所有广告的展示次数和点击次数/执行次数
-    pipeline.get('type:%s:values' % ad_type)
-    pipeline.get('type:%s:%s' % (ad_type, which))
+    pipeline.get('vote_type:%s:values' % ad_type)
+    pipeline.get('vote_type:%s:%s' % (ad_type, which))
     type_views, type_clicks = pipeline.execute()
     # 将广告的点击率或动作执行率重新写入全局字典里面
     AVERAGE_PER_1K[ad_type] = 1000 * int(type_clicks or '1') / int(type_views or '1')
