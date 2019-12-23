@@ -1,5 +1,5 @@
 import time
-import web_application
+from Unit2 import SignIn
 
 
 def benchmark_update_token(duration):
@@ -9,7 +9,7 @@ def benchmark_update_token(duration):
     @return:
     """
 
-    for function in (web_application.update_token, web_application.update_token_pipeline):
+    for function in (SignIn.update_token, SignIn.update_token_pipeline):
         count = 0
         start = time.time()
         end = start + duration
