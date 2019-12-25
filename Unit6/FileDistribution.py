@@ -166,7 +166,7 @@ def read_blocks(key, block_size=2 ** 17):
         block = conn.substr(key, pos, pos + block_size - 1)
         # 为下一次遍历做准备
         yield block
-        lb - len(block)
+        lb = len(block)
         pos += pos
     yield ''
 

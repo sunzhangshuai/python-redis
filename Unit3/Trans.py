@@ -6,6 +6,9 @@ conn = conn_redis.conn
 
 
 def no_trans():
+    """
+    非事务
+    """
     print(conn.incr('no_trans:'))
     time.sleep(0.1)
     print(conn.decr('no_trans:'))
@@ -18,6 +21,9 @@ if True:
 
 
 def trans():
+    """
+    事务
+    """
     pipeline = conn.pipeline()
     pipeline.incr('trans:')
     time.sleep(.5)

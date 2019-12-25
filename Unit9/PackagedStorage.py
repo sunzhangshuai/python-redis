@@ -2,7 +2,8 @@ import conn_redis
 import bisect
 import uuid
 import collections
-import redis
+import random
+from Unit6 import FileDistribution
 
 conn = conn_redis.conn
 COUNTRIES = '''ABW AFG AGO AIA ALA ALB AND ARE ARG ARM ASM ATA ATF ATG AUS AUT AZE BDI BEL BEN BES BFA BGD BGR BHR 
@@ -19,14 +20,14 @@ STATES = {
     'USA': '''AA AE AK AL AP AR AS AZ CA CO CT DC DE FL FM GA GU HI IA ID IL IN KS KY LA MA MD ME MH MI MN MO MP MS 
     MT NC ND NE NH NJ NM NV NY OH OK OR PA PR PW RI SC SD TN TX UT VA VI VT WA WI WV WY'''.split(),
 }
-USERS_PRE_SHARD = 2 ** 20
+USERS_PRE_SHARD = 2 ** 6
 
 
 def get_code(country, state):
     """ 负责将给定的国家和地区转换成编码
 
-    @param country: 国家
-    @param state: 城市
+    @param string country: 国家
+    @param string state: 城市
     @return:
     """
 
@@ -43,15 +44,15 @@ def get_code(country, state):
         if s_index > len(states) or states[s_index] != state:
             s_index = -1
     s_index += 1
-    return chr(c_index) + chr(s_index)
+    return str(chr(c_index)) + str(chr(s_index))
 
 
 def set_location(user_id, country, state):
     """ 存储用户位置
 
-    @param user_id: 用户id
-    @param country: 国家
-    @param state: 城市
+    @param int user_id: 用户id
+    @param string country: 国家
+    @param string state: 城市
     @return:
     """
 
@@ -61,19 +62,28 @@ def set_location(user_id, country, state):
     pipe = conn.pipeline(False)
     pipe.setrange('location:%s' % shard_id, offset, code)
     t_key = str(uuid.uuid4())
-    pipe.zadd(t_key, 'max', user_id)
+    pipe.zadd(t_key, {'max': user_id})
     pipe.zunionstore('location:max', [t_key, 'location:max'], aggregate='max')
     pipe.delete(t_key)
     pipe.execute()
 
 
 def aggregate_location():
+    """ 聚合用户信息
+
+    @return:
+    """
     countries = collections.defaultdict(int)
     states = collections.defaultdict(lambda: collections.defaultdict(int))
     max_id = int(conn.zscore('location:max', 'max'))
     max_block = max_id // USERS_PRE_SHARD
     for shard_id in range(max_block + 1):
-        pass
+        # 读取分片中的每个块
+        for block in FileDistribution.read_blocks('location:%s' % shard_id):
+            for offset in range(0, len(block) - 1, 2):
+                code = block[offset:offset + 2]
+                update_aggregates(countries, states, [code])
+    return countries, states
 
 
 def update_aggregates(countries, states, codes):
@@ -112,12 +122,20 @@ def aggregate_location_list(user_ids):
     pipe = conn.pipeline(False)
     countries = collections.defaultdict(int)
     states = collections.defaultdict(lambda: collections.defaultdict(int))
-    for i, user_id in enumerate(user_ids):
+    for index, user_id in enumerate(user_ids):
         shard_id, position = divmod(user_id, USERS_PRE_SHARD)
         offset = position * 2
         pipe.substr('location:%s' % shard_id, offset, offset + 1)
         # 每处理1000个请求，程序就会调用之前的辅助函数对聚合数据进行一次更新
-        if (i + 1) % 1000 == 0:
+        if (index + 1) % 1000 == 0:
             update_aggregates(countries, states, pipe.execute())
     update_aggregates(countries, states, pipe.execute())
     return countries, states
+
+
+if __name__ == '__main__':
+    for i in range(5):
+        str_country = random.sample(['CAN', 'USA'], 1)[0]
+        str_state = random.sample(STATES[str_country], 1)[0]
+        set_location(i, str_country, str_state)
+    print(aggregate_location())

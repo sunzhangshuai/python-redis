@@ -9,12 +9,10 @@ SHARD_SIZE = 512
 DAILY_EXPECTED = 1000000
 EXPECTED = {}
 
-conn = conn_redis.conn
-
 
 def shard_key(base, key, total_elements, shard_size):
-    """ 获取分片后的key
-
+    """
+    获取分片后的key
     @param base: 基础key
     @param key: 要存的map key
     @param total_elements: 预计的成员总数
@@ -30,9 +28,10 @@ def shard_key(base, key, total_elements, shard_size):
     return "%s%s" % (base, shard_id)
 
 
-def shard_hset(base, key, value, total_elements, shard_size):
+def shard_hset(conn, base, key, value, total_elements, shard_size):
     """ 分片版 hset
 
+    @param conn:
     @param base:
     @param key:
     @param value:
@@ -45,9 +44,10 @@ def shard_hset(base, key, value, total_elements, shard_size):
     return conn.hset(shard, key, value)
 
 
-def shard_hget(base, key, total_elements, shard_size):
+def shard_hget(conn, base, key, total_elements, shard_size):
     """ 分片版 hget
 
+    @param conn:
     @param base:
     @param key:
     @param total_elements:
@@ -59,9 +59,10 @@ def shard_hget(base, key, total_elements, shard_size):
     return conn.hget(shard, key)
 
 
-def shard_sadd(base, member, total_elements, shard_size):
+def shard_sadd(conn, base, member, total_elements, shard_size):
     """ 分片sadd
 
+    @param conn:
     @param base:
     @param member:
     @param total_elements:
@@ -72,23 +73,25 @@ def shard_sadd(base, member, total_elements, shard_size):
     return conn.sadd(shard_id, member)
 
 
-def count_visit(uid):
+def count_visit(conn, uid):
     """ 计算唯一访客量
 
+    @param conn:
     @param str uid:
     @return:
     """
     today = datetime.date.today()
     key = "unique:%s" % today.isoformat()
-    expected = get_expected(key, today)
+    expected = get_expected(conn, key, today)
     member = int(uid.replace("-", "")[:15], 16)
-    if shard_sadd(key, member, expected, SHARD_SIZE):
+    if shard_sadd(conn, key, member, expected, SHARD_SIZE):
         conn.incr(key)
 
 
-def get_expected(key, today):
+def get_expected(conn, key, today):
     """ 每天预计的访问量
 
+    @param conn:
     @param key:
     @param today:
     @return:
@@ -111,6 +114,5 @@ def get_expected(key, today):
 if __name__ == '__main__':
     for i in range(100000):
         session_id = uuid.uuid4()
-        count_visit(str(session_id))
-
-
+        conn1 = conn_redis.conn
+        count_visit(conn1, str(session_id))
